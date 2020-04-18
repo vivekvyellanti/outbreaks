@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="w3.css">
+<style>
+  
+
+  body {background-color: #f2f2f2;}
+
+
+
+  .names {
+  fill: none;
+  stroke: #fff;
+  stroke-linejoin: round;
+  }
+
+    /* Tooltip CSS */
+    .d3-tip {
+    line-height: 1.5;
+    font-weight: 400;
+    font-family:"avenir next", Arial, sans-serif;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #FFA500;
+    border-radius: 1px;
+    pointer-events: none;
+    }
+
+    /* Creates a small triangle extender for the tooltip */
+    .d3-tip:after {      
+      box-sizing: border-box;
+      display: inline;
+      font-size: 8px;
+      width: 100%;
+      line-height: 1.5;
+      color: rgba(0, 0, 0, 0.6);
+      position: absolute;
+      pointer-events: none;
+      
+    }
+
+    /* Northward tooltips */
+    .d3-tip.n:after {
+      content: "\25BC";
+      margin: -1px 0 0 0;
+      top: 100%;
+      left: 0;
+      text-align: center;
+    }
+
+    /* Eastward tooltips */
+    .d3-tip.e:after {
+      content: "\25C0";
+      margin: -4px 0 0 0;
+      top: 50%;
+      left: -8px;
+    }
+
+    /* Southward tooltips */
+    .d3-tip.s:after {
+      content: "\25B2";
+      margin: 0 0 1px 0;
+      top: -8px;
+      left: 0;
+      text-align: center;
+    }
+
+    /* Westward tooltips */
+    .d3-tip.w:after {
+      content: "\25B6";
+      margin: -4px 0 0 -1px;
+      top: 50%;
+      left: 100%;
+    }
+
+/*    text{
+      pointer-events:none;
+    }*/
+
+    .details{
+      color:white;
+    }
+
+</style>
+<script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/queue.v1.min.js"></script>
+<script src="https://d3js.org/topojson.v1.min.js"></script>
+<script src="d3-tip.js"></script>
+<script src="https://d3js.org/d3.v4.js"></script>
+<body>
+<nav class="w3-bar w3-black">
+  <a href="index.html" class="w3-button w3-bar-item">Home</a>
+  <a href="p1.html" class="w3-button w3-bar-item">Corona Dashboard</a>
+  <a href="p2.html" class="w3-button w3-bar-item">Previous Outbreaks</a>
+  <a href="td.html" class="w3-button w3-bar-item">Compare</a>
+</nav>
+
+
+<div id="ha"></div>
+<script>
+var format = d3.format(",");
+// Set tooltips
+let cdata =[];
+let fdata = [];
+
+
+d3.csv("Book1.csv",function df(error,data){
+                
+                cdata = data;
+                
+              })
+
+
+var margin = {top: 0, right: 0, bottom: 0, left: 0},
+            width = 760 - margin.left - margin.right,
+            height = 750 - margin.top - margin.bottom;
+
+var color = d3.scaleThreshold()
+    .domain([10000,100000,500000,1000000,5000000,10000000,50000000,100000000,500000000,1500000000])
+    .range(["rgb(247,251,255)", "rgb(222,235,247)", "rgb(198,219,239)", "rgb(158,202,225)", "rgb(107,174,214)", "rgb(66,146,198)","rgb(33,113,181)","rgb(8,81,156)","rgb(8,48,107)","rgb(3,19,43)"]);
+
+var path = d3.geoPath();
+
+var svg = d3.select("#ha")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append('g')
+            .attr('class', 'map');
+
+
+
+
+// Initialize the Y axis
+
+var data =[];
+
+var Margin1 = {Top: 30, Right: 30, Bottom: 70, Left: 60},
+    Width = 460 - Margin1.Left - Margin1.Right,
+    Height = 400 - Margin1.Top - Margin1.Bottom;
+
+var Svg = d3.select("#ha")
+  .append("svg")
+    .attr("width", Width + Margin1.Left + Margin1.Right)
+    .attr("height", Height + Margin1.Top + Margin1.Bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + Margin1.Left + "," + Margin1.Top + ")");
+
+
+
+
+
+var xAxis = Svg.append("g")
+  .attr("transform", "translate(0," + Height + ")")
+var yAxis = Svg.append("g")
+  .attr("class", "myYaxis")
+
+var tip = d3.tip()
+            .attr('class', 'd3-tip')
+            .offset([-10, 0])
+            .html(function(d) {
+              fdata = [];
+              x = d.properties.name;
+              fdata = cdata.filter(function(d,i){return d.name==x;});
+              console.log(fdata)
+data = [
+   {group: "SARS", value: fdata[0].SARSDEATHS},
+   {group: "H1N1", value: fdata[0].H1N1D},
+   {group: "MERS", value: fdata[0].MERSD}
+];
+console.log(data)
+
+              barupdate(data); 
+            return "<strong>Country: </strong><span class='details'>" + x + "<br></span>" + "<strong>Population: </strong><span class='details'>" + format(d.population) +"</span>" + "<strong><br>MERS CONF: </strong><span class='details'>"+fdata[0].MERSCA+"</span>"+ "<strong><br>SARS CONF: </strong><span class='details'>"+fdata[0].SARSCASES+"</span>"+ "<strong><br>H1N1 CONF: </strong><span class='details'>"+fdata[0].H1N1C+"</span>";
+            })
+
+var projection = d3.geoMercator()
+                   .scale(130)
+                  .translate( [width / 2, height / 1.5]);
+
+var path = d3.geoPath().projection(projection);
+
+svg.call(tip);
+
+queue()
+    .defer(d3.json, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
+    .defer(d3.csv, "Book1.csv")
+    .await(ready);
+
+function barupdate(data,x) {
+
+  var y = d3.scaleLinear()
+  .range([ Height, 0]);
+
+  var x = d3.scaleBand()
+  .range([ 0, Width ])
+  .padding(0.2);
+
+  x.domain(data.map(function(d) { return d.group; }))
+  xAxis.call(d3.axisBottom(x))
+
+  y.domain([0, d3.max(data, function(d) { return d.value }) ]);
+  yAxis.transition().duration(1000).call(d3.axisLeft(y));
+
+  var u = Svg.selectAll("rect")
+    .data(data)
+
+  u
+    .enter()
+    .append("rect") 
+    .merge(u) 
+    .transition() 
+    .duration(1000)
+      .attr("x", function(d) { return x(d.group); })
+      .attr("y", function(d) { return y(d.value); })
+      .attr("width", x.bandwidth())
+      .attr("height", function(d) { return Height - y(d.value); })
+      .attr("fill", "#69b3a2")
+  u
+    .exit()
+    .remove()
+
+  //x.exit().remove();
+}
+
+
+function ready(error, data, population) {
+  var populationById = {};
+
+  population.forEach(function(d) { populationById[d.id] = +d.population; });
+  data.features.forEach(function(d) { d.population = populationById[d.id] });
+  svg.append("g")
+      .attr("class", "countries")
+    .selectAll("path")
+      .data(data.features)
+    .enter().append("path")
+      .attr("d", path)
+      .style("fill", "rgb(42,42,40)")
+      .style('stroke', 'white')
+      .style('stroke-width', 1.5)
+      .style("opacity",0.8)
+      // tooltips
+        .style("stroke","white")
+        .style('stroke-width', 0.3)
+        .on('mouseover',function(d){
+          tip.show(d);
+          d3.select(this)
+            .style("opacity", 1)
+            .style("stroke","white")
+            .style("stroke-width",3);
+        })
+        .on('mouseout', function(d){
+          tip.hide(d);
+
+          d3.select(this)
+            .style("opacity", 0.8)
+            .style("stroke","white")
+            .style("stroke-width",0.3);
+        });
+
+  svg.append("path")
+      .datum(topojson.mesh(data.features, function(a, b) { return a.id !== b.id; }))
+      .attr("class", "names")
+      .attr("d", path);
+}
+
+
+</script>
+</body>
+</html>

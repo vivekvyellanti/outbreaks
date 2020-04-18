@@ -1,0 +1,484 @@
+﻿Country,Cases,DAY
+China,548,1
+China,643,2
+China,920,3
+China,1406,4
+China,2075,5
+China,2877,6
+China,5509,7
+China,6087,8
+China,8141,9
+China,9802,10
+China,11891,11
+China,16630,12
+China,19716,13
+China,23707,14
+China,27440,15
+China,30587,16
+China,34110,17
+China,36814,18
+China,39829,19
+China,42354,20
+China,44386,21
+China,44759,22
+China,59895,23
+China,66358,24
+China,68413,25
+China,70513,26
+China,72434,27
+China,74211,28
+China,74619,29
+China,75077,30
+China,75550,31
+China,77001,32
+China,77022,33
+China,77241,34
+China,77754,35
+China,78166,36
+China,78600,37
+China,78928,38
+China,79356,39
+China,79932,40
+China,80136,41
+China,80261,42
+China,80386,43
+China,80537,44
+China,80690,45
+China,80770,46
+China,80823,47
+China,80860,48
+China,80887,49
+China,80921,50
+China,80932,51
+China,80945,52
+China,80977,53
+China,81003,54
+China,81033,55
+China,81058,56
+China,81102,57
+China,81156,58
+China,81250,59
+China,81305,60
+China,81435,61
+China,81498,62
+China,81591,63
+China,81661,64
+China,81782,65
+China,81897,66
+China,81999,67
+China,82122,68
+China,82198,69
+US,1,1
+US,1,2
+US,2,3
+US,2,4
+US,5,5
+US,5,6
+US,5,7
+US,5,8
+US,5,9
+US,7,10
+US,8,11
+US,8,12
+US,11,13
+US,11,14
+US,11,15
+US,11,16
+US,11,17
+US,11,18
+US,11,19
+US,11,20
+US,12,21
+US,12,22
+US,13,23
+US,13,24
+US,13,25
+US,13,26
+US,13,27
+US,13,28
+US,13,29
+US,13,30
+US,15,31
+US,15,32
+US,15,33
+US,51,34
+US,51,35
+US,57,36
+US,58,37
+US,60,38
+US,68,39
+US,74,40
+US,98,41
+US,118,42
+US,149,43
+US,217,44
+US,262,45
+US,402,46
+US,518,47
+US,583,48
+US,959,49
+US,1281,50
+US,1663,51
+US,2179,52
+US,2727,53
+US,3499,54
+US,4632,55
+US,6421,56
+US,7783,57
+US,13677,58
+US,19100,59
+US,25489,60
+US,33276,61
+US,43847,62
+US,53740,63
+US,65778,64
+US,83836,65
+US,101657,66
+US,121478,67
+US,140886,68
+US,161807,69
+Australia,0,1
+Australia,0,2
+Australia,0,3
+Australia,0,4
+Australia,4,5
+Australia,5,6
+Australia,5,7
+Australia,6,8
+Australia,9,9
+Australia,9,10
+Australia,12,11
+Australia,12,12
+Australia,12,13
+Australia,13,14
+Australia,13,15
+Australia,14,16
+Australia,15,17
+Australia,15,18
+Australia,15,19
+Australia,15,20
+Australia,15,21
+Australia,15,22
+Australia,15,23
+Australia,15,24
+Australia,15,25
+Australia,15,26
+Australia,15,27
+Australia,15,28
+Australia,15,29
+Australia,15,30
+Australia,15,31
+Australia,15,32
+Australia,15,33
+Australia,15,34
+Australia,15,35
+Australia,15,36
+Australia,15,37
+Australia,15,38
+Australia,25,39
+Australia,27,40
+Australia,30,41
+Australia,39,42
+Australia,52,43
+Australia,55,44
+Australia,60,45
+Australia,63,46
+Australia,76,47
+Australia,91,48
+Australia,107,49
+Australia,128,50
+Australia,128,51
+Australia,200,52
+Australia,250,53
+Australia,297,54
+Australia,377,55
+Australia,452,56
+Australia,568,57
+Australia,681,58
+Australia,791,59
+Australia,1071,60
+Australia,1549,61
+Australia,1682,62
+Australia,2044,63
+Australia,2364,64
+Australia,2810,65
+Australia,3143,66
+Australia,3640,67
+Australia,3984,68
+Australia,4361,69
+United Kingdom_T,0,1
+United Kingdom_T,0,2
+United Kingdom_T,0,3
+United Kingdom_T,0,4
+United Kingdom_T,0,5
+United Kingdom_T,0,6
+United Kingdom_T,0,7
+United Kingdom_T,0,8
+United Kingdom_T,0,9
+United Kingdom_T,2,10
+United Kingdom_T,2,11
+United Kingdom_T,2,12
+United Kingdom_T,2,13
+United Kingdom_T,2,14
+United Kingdom_T,2,15
+United Kingdom_T,2,16
+United Kingdom_T,3,17
+United Kingdom_T,3,18
+United Kingdom_T,3,19
+United Kingdom_T,8,20
+United Kingdom_T,8,21
+United Kingdom_T,9,22
+United Kingdom_T,9,23
+United Kingdom_T,9,24
+United Kingdom_T,9,25
+United Kingdom_T,9,26
+United Kingdom_T,9,27
+United Kingdom_T,9,28
+United Kingdom_T,9,29
+United Kingdom_T,9,30
+United Kingdom_T,9,31
+United Kingdom_T,9,32
+United Kingdom_T,9,33
+United Kingdom_T,13,34
+United Kingdom_T,13,35
+United Kingdom_T,13,36
+United Kingdom_T,15,37
+United Kingdom_T,20,38
+United Kingdom_T,23,39
+United Kingdom_T,36,40
+United Kingdom_T,40,41
+United Kingdom_T,51,42
+United Kingdom_T,86,43
+United Kingdom_T,116,44
+United Kingdom_T,164,45
+United Kingdom_T,207,46
+United Kingdom_T,274,47
+United Kingdom_T,322,48
+United Kingdom_T,384,49
+United Kingdom_T,459,50
+United Kingdom_T,459,51
+United Kingdom_T,802,52
+United Kingdom_T,1144,53
+United Kingdom_T,1145,54
+United Kingdom_T,1551,55
+United Kingdom_T,1960,56
+United Kingdom_T,2642,57
+United Kingdom_T,2716,58
+United Kingdom_T,4014,59
+United Kingdom_T,5067,60
+United Kingdom_T,5745,61
+United Kingdom_T,6726,62
+United Kingdom_T,8164,63
+United Kingdom_T,9640,64
+United Kingdom_T,11812,65
+United Kingdom_T,14745,66
+United Kingdom_T,17312,67
+United Kingdom_T,19780,68
+United Kingdom_T,22453,69
+Italy,0,1
+Italy,0,2
+Italy,0,3
+Italy,0,4
+Italy,0,5
+Italy,0,6
+Italy,0,7
+Italy,0,8
+Italy,0,9
+Italy,2,10
+Italy,2,11
+Italy,2,12
+Italy,2,13
+Italy,2,14
+Italy,2,15
+Italy,2,16
+Italy,3,17
+Italy,3,18
+Italy,3,19
+Italy,3,20
+Italy,3,21
+Italy,3,22
+Italy,3,23
+Italy,3,24
+Italy,3,25
+Italy,3,26
+Italy,3,27
+Italy,3,28
+Italy,3,29
+Italy,3,30
+Italy,20,31
+Italy,62,32
+Italy,155,33
+Italy,229,34
+Italy,322,35
+Italy,453,36
+Italy,655,37
+Italy,888,38
+Italy,1128,39
+Italy,1694,40
+Italy,2036,41
+Italy,2502,42
+Italy,3089,43
+Italy,3858,44
+Italy,4636,45
+Italy,5883,46
+Italy,7375,47
+Italy,9172,48
+Italy,10149,49
+Italy,12462,50
+Italy,12462,51
+Italy,17660,52
+Italy,21157,53
+Italy,24747,54
+Italy,27980,55
+Italy,31506,56
+Italy,35713,57
+Italy,41035,58
+Italy,47021,59
+Italy,53578,60
+Italy,59138,61
+Italy,63927,62
+Italy,69176,63
+Italy,74386,64
+Italy,80589,65
+Italy,86498,66
+Italy,92472,67
+Italy,97689,68
+Italy,101739,69
+Spain,0,1
+Spain,0,2
+Spain,0,3
+Spain,0,4
+Spain,0,5
+Spain,0,6
+Spain,0,7
+Spain,0,8
+Spain,0,9
+Spain,0,10
+Spain,1,11
+Spain,1,12
+Spain,1,13
+Spain,1,14
+Spain,1,15
+Spain,1,16
+Spain,1,17
+Spain,1,18
+Spain,2,19
+Spain,2,20
+Spain,2,21
+Spain,2,22
+Spain,2,23
+Spain,2,24
+Spain,2,25
+Spain,2,26
+Spain,2,27
+Spain,2,28
+Spain,2,29
+Spain,2,30
+Spain,2,31
+Spain,2,32
+Spain,2,33
+Spain,2,34
+Spain,6,35
+Spain,13,36
+Spain,15,37
+Spain,32,38
+Spain,45,39
+Spain,84,40
+Spain,120,41
+Spain,165,42
+Spain,222,43
+Spain,259,44
+Spain,400,45
+Spain,500,46
+Spain,673,47
+Spain,1073,48
+Spain,1695,49
+Spain,2277,50
+Spain,2277,51
+Spain,5232,52
+Spain,6391,53
+Spain,7798,54
+Spain,9942,55
+Spain,11748,56
+Spain,13910,57
+Spain,17963,58
+Spain,20410,59
+Spain,25374,60
+Spain,28768,61
+Spain,35136,62
+Spain,39885,63
+Spain,49515,64
+Spain,57786,65
+Spain,65719,66
+Spain,73235,67
+Spain,80110,68
+Spain,87956,69
+India,0,1
+India,0,2
+India,0,3
+India,0,4
+India,0,5
+India,0,6
+India,0,7
+India,0,8
+India,1,9
+India,1,10
+India,1,11
+India,2,12
+India,3,13
+India,3,14
+India,3,15
+India,3,16
+India,3,17
+India,3,18
+India,3,19
+India,3,20
+India,3,21
+India,3,22
+India,3,23
+India,3,24
+India,3,25
+India,3,26
+India,3,27
+India,3,28
+India,3,29
+India,3,30
+India,3,31
+India,3,32
+India,3,33
+India,3,34
+India,3,35
+India,3,36
+India,3,37
+India,3,38
+India,3,39
+India,3,40
+India,5,41
+India,5,42
+India,28,43
+India,30,44
+India,31,45
+India,34,46
+India,39,47
+India,43,48
+India,56,49
+India,62,50
+India,73,51
+India,82,52
+India,102,53
+India,113,54
+India,119,55
+India,142,56
+India,156,57
+India,194,58
+India,244,59
+India,330,60
+India,396,61
+India,499,62
+India,536,63
+India,657,64
+India,727,65
+India,887,66
+India,987,67
+India,1024,68
+India,1251,69
