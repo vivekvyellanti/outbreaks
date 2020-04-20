@@ -1,0 +1,218 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="w3.css">
+        <meta charset="utf-8" />
+        <title>Line</title>
+        <style>
+            .cbb {
+                margin:auto;
+            }
+        </style>
+        </head>
+
+    <body>
+        <div id= "linegraph" align="center"  >
+
+        </div>
+        <div class="slidecontainer">
+            <input type="range" min="1" max="69" value="10" class="slider" id="jk">
+        </div>
+    </body>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="d3.legend.js"></script>
+    <script>
+        
+        d3.select("#jk").on("input",lupdate)
+
+        
+        
+        //let count = document.getElementById("myRange").value;
+        
+
+        //console.log(count)
+        
+        var margin = {top: 10, right: 30, bottom: 30, left: 50},
+            width = 550 - margin.left - margin.right,
+            height = 500 - margin.top - margin.bottom;
+        let fdata = [];
+        let ddata;
+        var svg = d3.select('#linegraph').append('svg').attr('width', width).attr('height', height).style("background-color","white").style("border", "5px solid black").style("border-radius", "20px");
+
+        
+
+        var xAxis = svg.append("g")
+            .attr("transform", "translate(0,430)")
+        var yAxis =svg.append("g") .attr("transform", "translate(50,0)");
+
+        lupdate();
+
+        function lupdate(){
+
+            let count = d3.select("#jk").property("value")
+            count=parseInt(count)
+
+        
+        
+        d3.csv("td2.csv",function(data){
+
+            
+            //ddata = data.slice(0,count);
+            //console.log(data)
+            
+
+            var result = data.filter((d) => { return d.DAY < count; });
+            var result1 = data.filter((d) => { return d.DAY == count; });
+          //data = data.filter(function(d) { return d.DAY < count })       
+          
+            //console.log(result)
+        
+
+            var sumstat = d3.nest() 
+            .key(function(d) { return d.Country;})
+            .entries(result);
+
+            console.log(result1)
+            //console.log(sumstat)
+
+            //sumstat = sumstat.filter(function(d) { return d.values.DAY == 7 });
+
+            
+            var x = d3.scaleLinear()
+            .domain(d3.extent(data, function(d) { return +d.DAY; }))
+            .range([ 50, width ]);
+
+            xAxis.call(d3.axisBottom(x).ticks(10));
+
+            
+            //let dy = d3.max(data, function(d) { return +d.DAY; })
+            //console.log(dy)
+
+            
+
+            var y = d3.scaleLinear()
+            .domain([0, d3.max(data, function(d) { return +d.Cases; })])
+            .range([ height-30,0]);
+
+            
+            yAxis.call(d3.axisLeft(y));
+            var res = sumstat.map(function(d){ return d.key })
+            //console.log(res)
+            var color = d3.scaleOrdinal()
+            .domain(res)
+            .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999'])
+			//let id = 0;
+			//const ids = function () {
+    		//					return "line-"+id++;
+			//				}
+           var lines = svg.selectAll(".lines").data(sumstat)
+           
+           
+ 	        	
+            lines.enter()
+            .append("path").attr("class","lines").merge(lines)
+            .attr("fill", "none")
+            .attr("stroke", "grey")//function(d){ return color(d.key) })
+            .attr("stroke-width", 1.5)
+            .attr("d", function(d){
+            return d3.line()
+            .x(function(d) { return x(d.DAY); })
+            .y(function(d) { return y(+d.Cases); })
+            (d.values)}).attr("data-legend",function(d) { return d.key}).on('mouseover', function(){d3.select(this)
+            .style("opacity", 1)
+            .style("stroke","red")
+            .style("stroke-width",3);}).on('mouseout',function(){d3.select(this)
+            .style("opacity", 1)
+            .style("stroke","grey")
+            .style("stroke-width",3);})
+
+
+       //lines.enter().append("text")
+      //.datum(function(d) { 
+      	//console.log(d.values[d.values.length - 1])
+      	//return {key: d.key, value: d.values[d.values.length - 1]}; })
+      //.attr("transform", function(d) { return "translate(" + x(d.value.DAY) + "," + y(d.value.Cases) + ")"; })
+      //.attr("x", 3)
+      //.attr("dy", ".35em")
+      //.text(function(d) { return d.key; });
+    var text = svg.selectAll(".ltext").data(result1)
+
+     text.enter().append("text").attr("class","ltext").merge(text)
+      //.attr("transform", "translate(" + x(d.DAY) + "," + y(d.Cases) + ")")
+      .attr("x", (d) => x(d.DAY))
+      .attr("y", (d => y(d.Cases)))
+      .attr("dy", ".35em")
+      .text(function(d) { return d.Country; });
+
+    text.exit().remove();
+
+    var text2 = svg.selectAll(".ltext2").data(result1)
+
+     text2.enter().append("text").attr("class","ltext2").merge(text2)
+      //.attr("transform", "translate(" + x(d.DAY) + "," + y(d.Cases) + ")")
+      .attr("x", (d) => x(d.DAY))
+      .attr("y", (d) => (y(d.Cases)+10))
+      .attr("dy", ".35em")
+      .text(function(d) { return d.Cases; });
+
+    text2.exit().remove();
+
+      //legend = svg.append("g")
+    //.attr("class","legend")
+    //.attr("transform","translate(50,30)")
+    //.style("font-size","12px")
+    //.call(d3.legend)
+
+    //setTimeout(function() { 
+    //legend
+     // .style("font-size","20px")
+     // .attr("data-style-padding",10)
+     // .call(d3.legend)
+  //},1000)
+//.on('mouseover', function(){d3.select(this)
+            //.style("opacity", 1)
+            //.style("stroke","white")
+            //.style("stroke-width",3);})//.append("text").text("hello")
+     //lines
+    //.append("text")
+   // .attr("text-anchor", "end")
+   // .attr("y", 50)
+    //.attr("x", 50)
+    //.text(function(d){ return(d.key)})
+    //.style("fill", function(d){ return color(d.key) })
+
+            //lines.append("text")
+    //.attr("class","line_label")
+   // .datum(function(d) {
+    //	
+      //  return {
+        //    id: d.key,
+        //   value: d.values[d.values.length - 1]}; })
+    //.attr("transform", function(d) {
+      //      return "translate(" + (x(d.values.DAY) + 10)  
+       //     + "," + (y(d.values.Cases) + 5 ) + ")";})
+    //.attr("x", 5)
+    //.text(function(d) { return d.id; });
+            
+       lines.exit().remove();
+
+            
+    
+
+
+
+              //update();
+        })
+       //console.log(fdata)
+        }
+
+       //function update(){
+         //let trail = svg.selectAll("mydots").data(fdata);
+
+        //trail.enter().append("circle").attr("r",4).attr("cx",(d)=>d.DAY1).attr("cy",(d,i)=> i*25).attr("fill",(d)=> continentColor(d.Country))
+
+       //}
+      
+
+    </script>
+
+</html>

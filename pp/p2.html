@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <link rel="stylesheet" href="w3.css">
+
 <style>
-  
-
-  body {background-color: #f2f2f2;}
-
-
 
   .names {
   fill: none;
@@ -82,19 +78,12 @@
     }
 
 </style>
+<body>
 <script src="https://d3js.org/d3.v4.js"></script>
 <script src="https://d3js.org/queue.v1.min.js"></script>
 <script src="https://d3js.org/topojson.v1.min.js"></script>
 <script src="d3-tip.js"></script>
 <script src="https://d3js.org/d3.v4.js"></script>
-<body>
-<nav class="w3-bar w3-black">
-  <a href="index.html" class="w3-button w3-bar-item">Home</a>
-  <a href="p1.html" class="w3-button w3-bar-item">Corona Dashboard</a>
-  <a href="p2.html" class="w3-button w3-bar-item">Previous Outbreaks</a>
-  <a href="td.html" class="w3-button w3-bar-item">Compare</a>
-</nav>
-
 
 <div id="ha"></div>
 <script>
@@ -102,8 +91,6 @@ var format = d3.format(",");
 // Set tooltips
 let cdata =[];
 let fdata = [];
-
-
 d3.csv("Book1.csv",function df(error,data){
                 
                 cdata = data;
@@ -200,7 +187,7 @@ function barupdate(data,x) {
   x.domain(data.map(function(d) { return d.group; }))
   xAxis.call(d3.axisBottom(x))
 
-  y.domain([0, d3.max(data, function(d) { return +d.value }) ]);
+  y.domain([0, d3.max(data, function(d) { return d.value }) ]);
   yAxis.transition().duration(1000).call(d3.axisLeft(y));
 
   var u = Svg.selectAll("rect")
@@ -213,7 +200,7 @@ function barupdate(data,x) {
     .transition() 
     .duration(1000)
       .attr("x", function(d) { return x(d.group); })
-      .attr("y", function(d) { return y(+d.value); })
+      .attr("y", function(d) { return y(d.value); })
       .attr("width", x.bandwidth())
       .attr("height", function(d) { return Height - y(d.value); })
       .attr("fill", "#69b3a2")
@@ -236,7 +223,7 @@ function ready(error, data, population) {
       .data(data.features)
     .enter().append("path")
       .attr("d", path)
-      .style("fill", "rgb(42,42,40)")
+      .style("fill", function(d) { return color(populationById[d.id]); })
       .style('stroke', 'white')
       .style('stroke-width', 1.5)
       .style("opacity",0.8)
@@ -261,10 +248,10 @@ function ready(error, data, population) {
 
   svg.append("path")
       .datum(topojson.mesh(data.features, function(a, b) { return a.id !== b.id; }))
+       // .datum(topojson.mesh(data.features, function(a, b) { return a !== b; }))
       .attr("class", "names")
       .attr("d", path);
 }
-
 
 </script>
 </body>
