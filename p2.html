@@ -225,7 +225,7 @@ var Svg = d3.select("#ha")
 //let bargroup = Svg.append("g").attr("transform", "translate(" + Width / 2 + "," + Height / 2 + ")");
 
 
-Svg.append("text").attr("x",180).attr("y",50).text("Death Toll").style("font-size",24)
+Svg.append("text").attr("x",180).attr("y",450).text("Death Toll").style("font-size",24)
 
 
 var xAxis = Svg.append("g")
@@ -239,16 +239,18 @@ var tip = d3.tip()
             .html(function(d) {
               fdata = [];
               x = d.properties.name;
+              
               fdata = cdata.filter(function(d,i){return d.name==x;});
               console.log(fdata)
+              x2 = fdata[0].names;
 data = [
    {group: "SARS", value: fdata[0].SARSDEATHS},
    {group: "H1N1", value: fdata[0].H1N1D},
    {group: "MERS", value: fdata[0].MERSD}
 ];
-console.log(data)
+//console.log(data)
 
-              barupdate(data,x); 
+              barupdate(data,x2); 
             return "<strong>Country: </strong><span class='details'>" + x + "<br></span>" + "<strong>Population: </strong><span class='details'>" + format(d.population) +"</span>" + "<strong><br>MERS CONF: </strong><span class='details'>"+fdata[0].MERSCA+"</span>"+ "<strong><br>SARS CONF: </strong><span class='details'>"+fdata[0].SARSCASES+"</span>"+ "<strong><br>H1N1 CONF: </strong><span class='details'>"+fdata[0].H1N1C+"</span>";
             })
 
@@ -280,7 +282,7 @@ function barupdate(data,nam) {
 
 let text = Svg.selectAll(".cname").data(cnn);
 
-text.enter().append("text").merge(text).attr("x",180).attr("y",20).text(cnn[0]).classed("cname",true).style("font-size",40);
+text.enter().append("text").merge(text).attr("x",150).attr("y",40).text(cnn[0]).classed("cname",true).style("font-size",40);
 
 text.exit().remove();
 
