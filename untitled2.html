@@ -4,43 +4,6 @@
         <meta charset="utf-8" />
         <title>Line</title>
         <style>
-        .slidecontainer {
-  width: 100%;
-}
-p.light {
-  font-weight: lighter;
-}
-
-.slider {
-  -webkit-appearance: none;
-  width: 15%;
-  height: 15px;
-  background: #d3d3d3;
-  outline: none;
-  opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
-}
-
-.slider:hover {
-  opacity: 1;
-}
-
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 15px;
-  height: 15px;
-  background: #4CAF50;
-  cursor: pointer;
-}
-
-.slider::-moz-range-thumb {
-  width: 15px;
-  height: 15px;
-  background: #4CAF50;
-  cursor: pointer;
-}
          .header {
   padding: 10px;
   text-align: center;
@@ -80,14 +43,11 @@ p.light {
 <div class="header">
   <h1>Compare</h1>
 </div><br>
-<div align="center">
-<h2 >Covid-19</h2>
-<p class="light">Note: Please click compare button every time you change the country</p></div>
         <div id= "linegraph" align="center"  >
 
         </div><br>
         <div class="slidecontainer" align="center">
-            <input type="range" min="1" max="92" value="10" class="slider" id="jk">
+            <input type="range" min="1" max="69" value="10" class="slider" id="jk">
             <button class="button button2" onclick="play()">play</button>
             <input type="range" min="10" max="1000" value="50" class="slider" id="jj">
         </div><br>
@@ -99,15 +59,11 @@ p.light {
         <option value="D">Deaths</option>
         <option value="C" selected>Confirmed</option>
         </select>
-        <select id="c10">
-        <option value="D" selected>Dynamic</option>
-        <option value="S">Static</option>
-        </select>
-      </div><br>
-       <h2 align="center">Comparision between Outbreaks: H1N1,COVID-19,SARS,MERS</h2>
+      </div>
+       
         <div id="cc" align="center"></div>
         <div align="center">
-        <select id="c5" class="browser-default"></select>
+        <select id="c5"></select>
         <select id="c4">
         <option value="D">Deaths</option>
         <option value="C" selected>Confirmed</option>
@@ -123,7 +79,6 @@ p.light {
       let count = d3.select("#jk").property("value");
           count=parseInt(count);
       let pt = 50;
-      let cr = "D";
       var playing = false;
       var margin = {top: 30, right: 30, bottom: 70, left: 60},
     width = 560 - margin.left - margin.right,
@@ -132,7 +87,7 @@ p.light {
 let x;
 let y;
       var margin2 = {top: 10, right: 30, bottom: 30, left: 50},
-            width2 = 950 - margin2.left - margin2.right,
+            width2 = 650 - margin2.left - margin2.right,
             height2 = 600 - margin2.top - margin2.bottom;
         
         var svg2 = d3.select('#linegraph').append('svg').attr('width', width2).attr('height', height2).style("background-color","white").style("border", "5px solid black").style("border-radius", "20px");
@@ -161,7 +116,6 @@ var svg = d3.select("#cc")
 
         d3.select("#jk").on("input",sliderstep)
         d3.select("#c3").on("change",sliderstep)
-        d3.select("#c10").on("change",setst)
         d3.select("#c4").on("change",compare2)
         d3.select("#c5").on("change",compare2)
         d3.csv("td2.csv",function(data){            
@@ -223,7 +177,7 @@ let bisect = d3.bisector(function(d) { return d.Day; }).left;;
 
 }
 svg2.append("text")
-      .attr("x",750)
+      .attr("x",475)
       .attr("y",510)
       .attr("dy", "1em")
       .style("text-anchor", "middle")
@@ -237,15 +191,15 @@ svg2.append("text")
       
       function compare(count)
         {
-          let d = new Date("JAN 21,2020 11:20:00");
+          let d = new Date("JAN 24,2020 11:20:00");
            c1 = d3.select("#c1").property("value");
            c2 = d3.select("#c2").property("value");
            c3 = d3.select("#c3").property("value");
-          //console.log(c1,c2,c3)
-          //console.log(count)
+          console.log(c1,c2,c3)
+          console.log(count)
          d3.csv("td2.csv",function(data){  
-          var result = data.filter((d) => { return d.Day < count; });
-          var result1 = data.filter((d) => { return d.Day == count; });
+          var result = data.filter((d) => { return d.DAY < count; });
+          var result1 = data.filter((d) => { return d.DAY == count; });
           
 
 
@@ -253,24 +207,15 @@ svg2.append("text")
           let plotdata =  result.filter((d) => { return d.Country==c1||d.Country==c2; });
 
              x = d3.scaleLinear()
-            .domain(d3.extent(data, function(d) { return +d.Day; }))
+            .domain(d3.extent(data, function(d) { return +d.DAY; }))
             .range([ 50, width2-40]);
 
             xAxis2.call(d3.axisBottom(x).ticks(10));
 
-         if(cr=="D"){
-
-          y = d3.scaleLinear()
-            .domain([0, d3.max(result, function(d) { if (c3 === "C"){return +d.Confirmed+100000;} else {return +d.Deaths+5000;} })])
+            
+             y = d3.scaleLinear()
+            .domain([0, d3.max(data, function(d) { if (c3 === "C"){return +d.Cases;} else {return +d.Deaths;} })])
             .range([ height2-30,40]);
-         }
-         else{
-            y = d3.scaleLinear()
-            .domain([0, d3.max(data, function(d) { if (c3 === "C"){return +d.Confirmed+100000;} else {return +d.Deaths+5000;} })])
-            .range([ height2-30,40]);
-
-         }   
-             
 
             //newfun(result);
             yAxis2.call(d3.axisLeft(y));
@@ -284,7 +229,7 @@ svg2.append("text")
             .key(function(d) { return d.Country;})
             .entries(plotdata);
 
-            //console.log(plotdata)//,plotdata,plottext)
+            console.log(plotdata)//,plotdata,plottext)
 
             let res = sumstat.map(function(d){ return d.key });
             //console.log(res)
@@ -305,8 +250,8 @@ svg2.append("text")
             .attr("stroke-width", 3)
             .attr("d", function(d){
             return d3.line()
-            .x(function(d) { return x(d.Day); })
-            .y(function(d) { if (c3 === "C"){return y(+d.Confirmed);}else {return y(+d.Deaths);} } )//
+            .x(function(d) { return x(d.DAY); })
+            .y(function(d) { if (c3 === "C"){console.log("hello");return y(+d.Cases);}else {return y(+d.Deaths);} } )//
             (d.values)}).on("mouseover",function(d){
               
             });//.attr("data-legend",function(d) { return d.key});
@@ -317,8 +262,8 @@ svg2.append("text")
              var text = svg2.selectAll(".ltext").data(plottext)
 
      text.enter().append("text").attr("class","ltext").merge(text)
-      .attr("x", (d) => x(d.Day))
-      .attr("y", function(d) { if (c3 === "C"){return y(+d.Confirmed);}else {return y(+d.Deaths);} } )
+      .attr("x", (d) => x(d.DAY))
+      .attr("y", function(d) { if (c3 === "C"){console.log("hello");return y(+d.Cases);}else {return y(+d.Deaths);} } )
       .attr("dy", ".35em")
       .text(function(d) { return d.Country; });;
 
@@ -327,10 +272,10 @@ svg2.append("text")
     var text2 = svg2.selectAll(".ltext2").data(plottext)
 
      text2.enter().append("text").attr("class","ltext2").merge(text2)
-      .attr("x", (d) => x(d.Day))
-      .attr("y", function(d) { if (c3 === "C"){return y(+d.Confirmed)+20;}else {return y(+d.Deaths)+20;} } )
+      .attr("x", (d) => x(d.DAY))
+      .attr("y", function(d) { if (c3 === "C"){console.log("hello");return y(+d.Cases)+20;}else {return y(+d.Deaths)+20;} } )
       .attr("dy", ".35em")
-      .text(function(d) { if (c3 === "C"){return d.Confirmed;}else {return d.Deaths;} } );
+      .text(function(d) { if (c3 === "C"){console.log("hello");return d.Cases;}else {return d.Deaths;} } );
 
     text2.exit().remove();
     let date =[];
@@ -339,7 +284,7 @@ svg2.append("text")
     var text3 = svg2.selectAll(".ltext3").data(date)
 
      text3.enter().append("text").merge(text3).classed("ltext3",true)
-      .attr("x",300)
+      .attr("x",150)
       .attr("y", 150).style("font-size",48).attr("fill","rgb(51,51,51)").style("opacity","0.4")
       //.attr("dy", ".35em")
       .text(date[0]);
@@ -349,8 +294,6 @@ svg2.append("text")
 
 
    
-
-
 
             if (playing)
                 setTimeout(step,pt)
@@ -364,15 +307,15 @@ svg2.append("text")
 
         d3.csv("book2.csv",function(data){  
 
-        //console.log(data)          
+        console.log(data)          
             
             var sumstat = d3.nest() 
             .key(function(d) { return d.name;})
             .entries(data);
-           //console.log(sumstat)  
+           console.log(sumstat)  
 
             let res2 = sumstat.map(function(d){ return d.key })
-            //console.log(res2)
+            console.log(res2)
             optionupdate2(res2)
             function optionupdate2(optionsData)
         {
@@ -403,14 +346,11 @@ function sliderstep()
         {
           let c4 = d3.select("#c4").property("value");
           let c5 = d3.select("#c5").property("value");
-          
-
-          
-          //console.log(c4,c5)
+          console.log(c4,c5)
            d3.csv("book2.csv",function(data){
 
           let fdata = data.filter((d) => { return d.name == c5; });
-          //console.log(fdata)
+          console.log(fdata)
 
           if (c4=="C") 
 
@@ -467,7 +407,7 @@ function sliderstep()
          
       }
 function play() {
-  //console.log(d3.select("button").property("value"))
+  console.log(d3.select("button").property("value"))
   
   if (d3.select("button").property("value") == "Play") {
     d3.select("button").text("Pause")
@@ -484,7 +424,7 @@ function play() {
 
 function step() {
   
-  if(count==92)
+  if(count==69)
     count=0;
   count++;
   compare(count);
@@ -505,11 +445,6 @@ function formatDate(date,count) {
                 var year = dat2.getFullYear(); 
                 return day + "/" + month + "/" + year; 
             } 
-
-            function setst()
-{
-   cr = d3.select("#c10").property("value");
-}
 
 
     </script>

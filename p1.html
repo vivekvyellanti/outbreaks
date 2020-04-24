@@ -10,6 +10,43 @@
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 <style>
+a {
+  color: Navy;
+}
+.slidecontainer {
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 15%;
+  height: 15px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  background: #4CAF50;
+  cursor: pointer;
+}
   body {background-color: #f2f2f2;}
   .header {
   padding: 20px;
@@ -31,10 +68,32 @@ h1 {
 
 p1 {
   
+  font-weight: normal;
+
+
   text-align: justify;
   
 }
+.footer {
+  padding: 20px;
+  text-align: center;
+  background:  #1abc9c;
+  margin-top: 10px;
+}
+.button2 {
 
+  background-color: #1abc9c;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  padding: 10px 20px;
+
+}
 </style>
 </head>
 <!-- Create an element where the map will take place -->
@@ -47,12 +106,11 @@ p1 {
 </nav>
 <div class="header">
   <h1>Covid-19</h1>
-  <p>Last Updated on:</p>
+  <p id="date">Last Updated on:</p>
 </div>
-<div>
+  <div  align="center"><input type="checkbox" id="show" value="true"">&nbsp Show the bubble map</input></div>
   <div id="dash" class="divte"></div>
-  <div  align="center"><input type="checkbox" id="show" value="true"">Show the bubble map</input></div>
- </div> 
+  
 
   <br>
   <div class= "divte" align="center">
@@ -61,18 +119,33 @@ p1 {
       Coronavirus disease (COVID-19) is an infectious disease caused by a newly discovered coronavirus.
       Most people who fall sick with COVID-19 will experience mild to moderate symptoms and recover without special treatment.
     </p1>
+<br>
+    <h2>How it Spreads?</h2>
+      <p1>
+The virus that causes COVID-19 is mainly transmitted through droplets generated when an infected person coughs, sneezes, or exhales. These droplets are too heavy to hang in the air, and quickly fall on floors or surfaces.You can be infected by breathing in the virus if you are within close proximity of someone who has COVID-19, or by touching a contaminated surface and then your eyes, nose or mouth.</p1>
+<br>
+<p><b><a href="https://www.who.int/emergencies/diseases/novel-coronavirus-2019" target="_blank">Learn More at WHO</a></b></p>
   </div>
   <h1>Trend Graph of Covid-19</h1>
   <div id= "linegraph" align="center"  ></div>
+ 
+  
   <div class="slidecontainer" align="center">
-  <input type="range" min="1" max="69" value="10" class="slider" id="jk">
-  </div>
+  <input type="range" min="1" max="92" value="10" class="slider" id="jk"></input>
+  <button onclick="play()" id="animate" value="Play" class="button2">Play</button>
+  <input type="range" min="10" max="1000" value="100" class="slider" id="jj">
+  <br>Day &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspSpeed
+  </div><br>
+  <div class="footer">
+  
+</div>
 	
 </body>
 <script>
 //#b3cccc;
 // The svg
-let x = ""
+let pt = 100;
+let counts = 0;
 let height = 700;
 let width = 960;
 let Width = 450;
@@ -80,10 +153,20 @@ let margin = 40;
 var radius = Math.min(Width, height/2) / 2 - margin
 let i = 0;
 let r = 5;
-
+var playing = false;
+let cn = "World";
 var format = d3.format(",");
+let ndata=[];
+let datee = "";
+var area = d3.scaleLinear()
+  .range([25 * Math.PI, 1500 * Math.PI])//
+  .domain([20, 1000000]);
 
-// Map and projection
+var size = d3.scaleLinear()
+      .domain([1,732444])  
+      .range([2, 50])
+
+let cndata;  
 var path = d3.geoPath();
 var projection = d3.geoMercator()
   .scale(130)
@@ -91,23 +174,56 @@ var projection = d3.geoMercator()
   .translate([width / 2, height / 1.5]);
 
 var color = d3.scaleOrdinal()
-  .domain(["a", "b", "c"])
-  .range(d3.schemeDark2);
+  .domain(["Active", "Deaths", "Recovered"])
+  .range(["RoyalBlue","LightSalmon","MediumSeaGreen"]);
 
-// Data and color scale
+
 var data = d3.map();
 var colorScale = d3.scaleThreshold()
   .domain([100000, 1000000, 10000000, 30000000, 100000000, 500000000])
   .range(d3.schemeBlues[7]);
 
 var svg = d3.select("#dash").append("svg").attr("height",700).attr("width",960);
-let pcsvg = d3.select("#dash").append("svg").attr("height",700).attr("width",400) ; 
+let pcsvg = d3.select("#dash").append("svg").attr("height",700).attr("width",400) ;
+
+var legen = ["Active", "Deaths", "Recovered"]
+pcsvg.selectAll(".legenc")
+  .data(legen)
+  .enter()
+  .append("circle")
+    .attr("cx", 100)
+    .attr("cy", function(d,i){ return 120 + i*25}) 
+    .attr("r", 7)
+    .style("fill", function(d){ return color(d)})
+let higj = [];
+higj[0] = "Confirmed :";
+pcsvg.selectAll(".ghh").data(higj).enter().append("text").attr("x", 95).attr("y", 105).text(higj[0]).classed("ghh",true);
+
+pcsvg.selectAll(".legent")
+  .data(legen)
+  .enter()
+  .append("text")
+    .attr("x", 120)
+    .attr("y", function(d,i){ return 120 + i*25}) 
+    .style("fill", function(d){ return color(d)})
+    .text(function(d){ return d})
+    .attr("text-anchor", "left")
+    .style("alignment-baseline", "middle")
+
 //var p = d3.select("pcsvg").append("g").attr("transform", "translate(" + Width / 2 + "," + height / 2 + ")")
-d3.select("#jk").on("input",lupdate)
+d3.select("#jk").on("input",sliderstep)
+d3.select("#jj").on("input",settrans)
+
+function settrans()
+{
+  let pt1 = d3.select("#jj").property("value");
+  pt =parseInt(pt1);
+}
+
         let res;
         var selectTag = d3.select("select");
          var margin2 = {top: 10, right: 30, bottom: 30, left: 50},
-            width2 = 550 - margin2.left - margin2.right,
+            width2 = 950 - margin2.left - margin2.right,
             height2 = 500 - margin2.top - margin2.bottom;
         
         var svg2 = d3.select('#linegraph').append('svg').attr('width', width2).attr('height', height2).style("background-color","white").style("border", "5px solid black").style("border-radius", "20px");
@@ -120,21 +236,44 @@ d3.select("#jk").on("input",lupdate)
 
 
 
+svg2.append("text")
+      .attr("x",750)
+      .attr("y",415)
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text("Days ----->");
+svg2.append("text")
+      .attr("x",50)
+      .attr("y",10)
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text("Cases");
+      d3.csv("https://raw.githubusercontent.com/vivekvyellanti/dataout/master/upd.csv",function(data){
+console.log(data);
+datee = data[0].Date;
+//= data[0].Confirmed - data[0].Recovered - data[0].Deaths
+ndata[0] = {Confirmed: data[0].Confirmed, Deaths : data[0].Deaths , Recovered : data[0].Recovered};
+  document.getElementById("date").innerHTML    = "Last Updated: "+data[0].Date;
+  textupdate(ndata,cn);
+  }); 
 
+  d3.csv("time_series_covid19_confirmed_global.csv",function(error,cndata) {
 
-  d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",function(error,data) {
+//cndata = data.filter(function(d) { return d.Date == "09/04/20" });
+//console.log(cndata)
+//let valueExtent = d3.extent(ndata, function(d) { return +d.Cases; });
+//var size = d3.scaleSqrt().domain(valueExtent).range([ 1, 50]);
 
-  //ldata = data.filter(function(d) { return d.Date == "09/04/20" })
 let circles = svg
       .selectAll(".mc")
-      .data(data)
+      .data(cndata)
       
       circles.enter()
       .append("circle")
         .merge(circles)
         .attr("cx", function(d){ return projection([d.Long, d.Lat])[0] })
         .attr("cy", function(d){ return projection([d.Long, d.Lat])[1] })
-        .attr("r", 5)//function(d){ return size(d.size) })
+        .attr("r", function(d){ return  Math.sqrt(area(d.Confirmed))/2;})//function(d){ return size(d.size) })
         .style("fill", "red")
         .attr("stroke", "none")
         .attr("stroke-width", 3)
@@ -149,11 +288,11 @@ function update(){
   d3.select("#show").each(function(d){
         
         cb = d3.select(this);
-        console.log(cb.property("checked"))
+        //console.log(cb.property("checked"))
         // If the box is check, I show the group
         if(cb.property("checked")){
-          console.log("fggffg")
-          svg.selectAll(".mc").transition().duration(1000).style("opacity", 1).attr("r",5)
+          //console.log("fggffg")
+          svg.selectAll(".mc").transition().duration(1000).style("opacity", 1).attr("r",function(d){ return  Math.sqrt(area(d.Confirmed));})
           
         // Otherwise I hide it
         }else{
@@ -167,15 +306,14 @@ function update(){
     d3.selectAll("#show").on("change",update);
 
 
-tupdate()
+//tupdate();
 
 // Load external data and boot
 d3.queue()
-  .defer(d3.json,"https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")//"world_countries.json" )
-  //.defer(d3.csv, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world_population.csv", function(d) { data.set(d.code, +d.pop); })
+  .defer(d3.json,"https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
   .await(ready);
 
-svg.append("text").attr("x",150).attr("y",150).attr("fill","red").text(x)
+//svg.append("text").attr("x",150).attr("y",150).attr("fill","red").text(x)
 
 function ready(error, topo) {
 
@@ -194,92 +332,118 @@ function ready(error, topo) {
 .on("mouseover",function(d,i){d3.select(this).transition()
 .duration(50).attr("opacity","1")
 
-x= d.properties.name
-textupdate(x)
+let x = d.properties.name;
+dataupdate(x);
 }).on("mouseout",function(d,i){
-
-    tupdate()
+ textupdate(ndata,cn);
   d3.select(this).transition().duration(50).attr("opacity",".85");});
     }
+    
+   
+function dataupdate(cn)
 
-function textupdate(x)
+    {d3.csv("https://raw.githubusercontent.com/vivekvyellanti/dataout/master/time-series-19-covid-combined.csv",function(error,data) {
+ldata = data.filter(function(d) { return d.Date == datee})
+//console.log(ldata)
+let kdata = ldata.filter(function(d) { return d.Country == cn });
+textupdate(kdata,cn)
+
+})}
+
+function textupdate(kdata,cnn)
 
 {
 
-//console.log(x)
-d3.csv("time-series-19-covid-combined_csv.csv",function(error,data) {
-ldata = data.filter(function(d) { return d.Date == "09/04/20" })
-//console.log(ldata)
-let kdata = ldata.filter(function(d) { return d.Country == x })
-//console.log(kdata)
+  let tda = [];
+
+  tda[0] = cnn;
 
 
+//console.log(kdata);
+let text = pcsvg.selectAll(".tcc").data(tda);
+text.enter().append("text").merge(text).attr("x",145).attr("y",85).style("fill","black").style("opacity","1")
+.text(tda[0]).classed("tcc",true);
+text.exit().remove();
+
+let confirm = kdata[0].Confirmed - kdata[0].Deaths - kdata[0].Recovered;
+let ctext = pcsvg.selectAll(".cct").data(kdata);
+ctext.enter().append("text").merge(ctext).attr("x",200).attr("y",105).style("fill","black")
+.text(function(d,i){ return format(kdata[0].Confirmed)}).classed("cct",true);
+//let c1 = kdata[0].Confirmed-10;
+//console.log(c1)
+ctext.exit().remove();
 let text1 = pcsvg.selectAll(".tc").data(kdata);
-text1.enter().append("text").merge(text1).attr("x",150).attr("y",150).style("fill","red")
-.text(function(d,i){ return format(kdata[0].Confirmed)}).classed("tc",true);
+text1.enter().append("text").merge(text1).attr("x",200).attr("y",125).style("fill","black")
+.text(function(d,i){ return format(confirm)}).classed("tc",true);
 //let c1 = kdata[0].Confirmed-10;
 //console.log(c1)
 text1.exit().remove();
 
 let text2 = pcsvg.selectAll(".tr").data(kdata);
-text2.enter().append("text").merge(text2).attr("x",150).attr("y",130).style("fill","red")
+text2.enter().append("text").merge(text2).attr("x",200).attr("y",150).style("fill","black")
 .text(function(d,i){ return format(kdata[0].Deaths)}).classed("tr",true);
 text2.exit().remove();
 
 let text3 = pcsvg.selectAll(".td").data(kdata);
-text3.enter().append("text").merge(text3).attr("x",150).attr("y",110).style("fill","red")
+text3.enter().append("text").merge(text3).attr("x",200).attr("y",174).style("fill","black")
 .text(function(d,i){ return format(kdata[0].Recovered)}).classed("td",true);
 text3.exit().remove();
 
-let confirm = kdata[0].Confirmed - kdata[0].Deaths - kdata[0].Recovered; 
-
-var data = {a: kdata[0].Recovered, b: kdata[0].Deaths , c: confirm}
-
-pieupdate(data)
-
-}
-)
-}
-
-
-function tupdate()
-
-{
  
- ndata={Confirmed: "1767855", Deaths : "108281" , Recovered : "401873"}
-console.log(ndata);
 
-let text1 = pcsvg.selectAll(".tc");
-text1.data(ndata).enter().append("text").merge(text1).attr("x",150).attr("y",150).style("fill","red")
-.text(function(d,i){ return ndata.Confirmed}).classed("tc",true);
-text1.exit().remove();
+var data = {Active: confirm,Deaths: kdata[0].Deaths,Recovered: kdata[0].Recovered}
 
-let text2 = pcsvg.selectAll(".tr");
-text2.data(ndata).enter().append("text").merge(text2).attr("x",150).attr("y",130).style("fill","red")
-.text(function(d,i){ return ndata.Deaths}).classed("tr",true);
-text2.exit().remove();
-
-let text3 = pcsvg.selectAll(".td");
-text3.data(ndata).enter().append("text").merge(text3).attr("x",150).attr("y",110).style("fill","red")
-.text(function(d,i){ return ndata.Recovered}).classed("td",true);
-text3.exit().remove();
-
-let confirm = ndata.Confirmed - ndata.Deaths - ndata.Recovered; 
-var data = {a: ndata.Recovered, b: ndata.Deaths , c: confirm}
 pieupdate(data)
 
-
 }
+
+
+//function tupdate()
+//{
+  //pcsvg.selectAll("text").remove();
+ // tupdate2();
+//}
+
+
+//function tupdate2()
+
+//{
+ 
+
+//ndata={Confirmed: "1767855", Deaths : "108281" , Recovered : "401873"}
+
+//console.log(ndata);
+//let text1 = pcsvg.selectAll(".tc");
+//text1.data(ndata).enter().append("text").merge(text1).attr("x",150).attr("y",150).style("fill","red")
+//.text(function(d,i){ return ndata.Confirmed}).classed("tc",true);
+//text1.exit().remove();
+
+//let text2 = pcsvg.selectAll(".tr");
+//text2.data(ndata).enter().append("text").merge(text2).attr("x",150).attr("y",130).style("fill","red")
+//.text(function(d,i){ return ndata.Deaths}).classed("tr",true);
+//text2.exit().remove();
+
+//let text3 = pcsvg.selectAll(".td");
+//text3.data(ndata).enter().append("text").merge(text3).attr("x",150).attr("y",110).style("fill","red")
+//.text(function(d,i){ return ndata.Recovered}).classed("td",true);
+//text3.exit().remove();
+//
+//let confirm = ndata.Confirmed - ndata.Deaths - ndata.Recovered; 
+//var data = {a: ndata.Recovered, b: ndata.Deaths , c: confirm}
+//pieupdate(data)
+
+
+//}
 function pieupdate(data)
 {
 
 
 var pie = d3.pie()
     .value(function(d) {return d.value; })
-    .sort(function(a, b) { console.log(a) ; return d3.ascending(a.key, b.key);} ) // This make sure that group order remains the same in the pie chart
+    .sort(function(a, b) { return d3.ascending(a.key, b.key);} ) // This make sure that group order remains the same in the pie chart
   
 var data_ready = pie(d3.entries(data))
-console.log(data_ready)
+//console.log(data_ready)
 var u = pcsvg.append("g").attr("transform", "translate(" + Width / 2 + "," + height / 2 + ")").selectAll("path")
     .data(data_ready)
 
@@ -304,45 +468,53 @@ u
 
 }
 
-lupdate();
-
+sliderstep();
+function sliderstep()
+{
+  let counts = d3.select("#jk").property("value");
+  counts =parseInt(counts);
+  lupdate(counts)
+}
        
 
-        function lupdate(){
+        function lupdate(count){
 
-            let count = d3.select("#jk").property("value")
-            count=parseInt(count)
+            let d = new Date("JAN 21,2020 11:20:00");
 
-        d3.csv("td2.csv",function(data){            
-            var result = data.filter((d) => { return d.DAY < count; });
-            var result1 = data.filter((d) => { return d.DAY == count; });
+            
+
+            d3.csv("td2.csv",function(data){            
+            var result = data.filter((d) => { return d.Day < count; });
+            var result1 = data.filter((d) => { return d.Day == count; });
          
-        
+            console.log(data)
 
             var sumstat = d3.nest() 
             .key(function(d) { return d.Country;})
             .entries(result);
 
-            console.log(result1)
+            //console.log(result1)
+            //console.log(sumstat)
            
             var x = d3.scaleLinear()
-            .domain(d3.extent(data, function(d) { return +d.DAY; }))
-            .range([ 50, width2 ]);
+            .domain(d3.extent(data, function(d) { return +d.Day; }))
+            .range([ 50, width2-40 ]);
 
             xAxis2.call(d3.axisBottom(x).ticks(10));
 
             
             var y = d3.scaleLinear()
-            .domain([0, d3.max(data, function(d) { return +d.Cases; })])
-            .range([ height2-30,0]);
+            .domain([0, d3.max(result, function(d) { return +d.Confirmed+100000; })])//+d.Confirmed+15000
+            .range([ height2-30,30]);
 
             
             yAxis2.call(d3.axisLeft(y));
             res = sumstat.map(function(d){ return d.key })
+            //console.log(res);
             //optionupdate(res)
             var color = d3.scaleOrdinal()
             .domain(res)
-            .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999'])
+            .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999',"gold", "powderblue", "green", "yellow", "black", "grey", "darkgreen", "pink", "brown", "slateblue", "grey1", "orange"])
       
            var lines = svg2.selectAll(".lines").data(sumstat)
            
@@ -355,8 +527,8 @@ lupdate();
             .attr("stroke-width", 1.5)
             .attr("d", function(d){
             return d3.line()
-            .x(function(d) { return x(d.DAY); })
-            .y(function(d) { return y(+d.Cases); })
+            .x(function(d) { return x(+d.Day);})
+            .y(function(d) { return y(+d.Confirmed); })
             (d.values)}).attr("data-legend",function(d) { return d.key}).on('mouseover', function(){d3.select(this)
             .style("opacity", 1)
             .style("stroke","red")
@@ -368,23 +540,35 @@ lupdate();
 
     var text = svg2.selectAll(".ltext").data(result1)
 
-     text.enter().append("text").attr("class","ltext").merge(text)
-      .attr("x", (d) => x(d.DAY))
-      .attr("y", (d => y(d.Cases)))
+     text.enter().append("text").attr("class","ltext").merge(text).attr("fill",(d)=>color(d.Country))
+      .attr("x", (d) => x(d.Day))
+      .attr("y", (d => y(d.Confirmed)))
       .attr("dy", ".35em")
       .text(function(d) { return d.Country; });
 
-    text.exit().remove();
+   text.exit().remove();
 
-    var text2 = svg2.selectAll(".ltext2").data(result1)
+  // var text2 = svg2.selectAll(".ltext2").data(result1)
 
-     text2.enter().append("text").attr("class","ltext2").merge(text2)
-      .attr("x", (d) => x(d.DAY))
-      .attr("y", (d) => (y(d.Cases)+10))
+    // text2.enter().append("text").attr("class","ltext2").merge(text2)
+      //.attr("x", (d) => x(d.Day))
+      //.attr("y", (d) => (y(d.Confirmed)+15))
+      //.attr("dy", ".35em")
+      //.text(function(d) { return d.Confirmed; });
+
+//    text2.exit().remove();
+    let date =[];
+    date[0] = formatDate(d,count);
+    
+    var text3 = svg2.selectAll(".ltext3").data(date)
+
+     text3.enter().append("text").merge(text3).classed("ltext3",true)
+      .attr("x",275)
+      .attr("y", 150).style("font-size",48).attr("fill","rgb(51,51,51)").style("opacity","0.4")
       .attr("dy", ".35em")
-      .text(function(d) { return d.Cases; });
+      .text(date[0]);
 
-    text2.exit().remove();
+    text3.exit().remove();
 
       
             
@@ -392,8 +576,48 @@ lupdate();
 
                    
         })
-       
+            if (playing)
+                setTimeout(step,pt)     
         }
+
+        function formatDate(date,count) {
+          dat =new Date(date.setDate(date.getDate()));
+                dat2 =new Date(dat.setDate(date.getDate()+count));
+                var day = dat2.getDate(); 
+                if (day < 10) { 
+                    day = "0" + day; 
+                } 
+                var month = dat2.getMonth() + 1; 
+                if (month < 10) { 
+                    month = "0" + month; 
+                } 
+                var year = dat2.getFullYear(); 
+                return day + "/" + month + "/" + year; 
+            } 
+
+function play() {
+  
+  if (d3.select("button").property("value") == "Play") {
+    d3.select("button").text("Pause")
+        d3.select("button").property("value", "Pause")
+        playing = true
+        step()
+  }
+  else {
+    d3.select("button").text("Play")
+        d3.select("button").property("value", "Play")
+        playing = false
+  }
+}
+function step() {
+  
+  if(counts==92)
+    counts=0;
+  counts++;
+  lupdate(counts);
+  
+}
+
 
 
 

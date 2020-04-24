@@ -6,8 +6,26 @@
 
   body {background-color: #f2f2f2;}
 
-
-
+p {
+  
+  text-align: justify;
+  padding: 30px;
+  
+}
+.header {
+  padding: 10px;
+  text-align: center;
+  background: #1abc9c;
+  color: white;
+  font-size: 20px;
+}
+.header2 {
+  padding: 5px;
+  text-align: center;
+  background: #DCDCDC;
+  color: black;
+  font-size: 20px;
+}
   .names {
   fill: none;
   stroke: #fff;
@@ -76,6 +94,12 @@
 /*    text{
       pointer-events:none;
     }*/
+    .footer {
+  padding: 20px;
+  text-align: center;
+  background:  #1abc9c;
+  margin-top: 10px;
+}
 
     .details{
       color:white;
@@ -95,9 +119,61 @@
   <a href="td.html" class="w3-button w3-bar-item">Compare</a>
 </nav>
 
-
-<div id="ha"></div>
+<div class="header">
+  <h1>Previous Outbreaks</h1>
+  <p1>H1N1, SARS , MERS</p1>
+</div>
+<div class="header2" align="center">
+  <h2>Please Hover On the particualr Country For Information</h2> 
+</div>
+<div id="ha" class="cont"></div>
+<br>
+<div align="center">
+  <h3>About H1N1</h3>
+  <p>
+    A human respiratory infection caused by an influenza strain that started in pigs.
+    Swine flu was first recognized in the 1919 pandemic and still circulates as a seasonal flu virus. Swine flu is caused by the H1N1 virus strain, which started in pigs.
+Symptoms include fever, cough, sore throat, chills, and body aches.
+Typical treatment includes rest, pain relievers, and fluids.
+  </p>
+  <p><b>HOW IT SPREADS</b></p>
+  <p>
+By airborne respiratory droplets (coughs or sneezes).
+By touching a contaminated surface (blanket or doorknob).
+By saliva (kissing or shared drinks).</p>
+  <p><b>First Case appeared in Mexico(2009).</b></p>
+<h3>About SARS</h3>
+  <p>
+A contagious and sometimes fatal respiratory illness caused by a coronavirus.
+SARS appeared in 2002 in China. It spread worldwide within a few months, though it was quickly contained. SARS is a virus transmitted through droplets that enter the air when someone with the disease coughs, sneezes, or talks. No known transmission has occurred since 2004.
+Fever, dry cough, headache, muscle aches, and difficulty breathing are symptoms.
+No treatment exists except supportive care.
+  </p><p><b>HOW IT SPREADS</b></p>
+  <p>
+    By airborne respiratory droplets (coughs or sneezes).
+By touching a contaminated surface (blanket or doorknob).
+By saliva (kissing or shared drinks).
+By skin-to-skin contact (handshakes or hugs).
+  </p>
+<p><b>First Case appeared in the Guangdong province in southern China.</b></p>
+  <h3>About MERS</h3>
+  <p>
+    A viral respiratory illness caused by a coronavirus.
+Middle East respiratory syndrome (MERS) is a contagious, sometimes fatal respiratory illness. It's often spread through close contact with an infected person.
+Symptoms include fever, cough, and shortness of breath. Other symptoms may include nausea, vomiting, and diarrhea.
+Treatment includes rest, fluids, pain relievers, and oxygen therapy in severe cases.
+  </p>
+<p><b>HOW IT SPREADS</b></p>
+  <p>
+    The infection can be spread from person to person through respiratory secretions. It may be transmitted from camels to humans. Those who handle camels are at higher risk of MERS-CoV infection than people who do not have regular close contacts with camels.
+  </p>
+  <p>Health officials first reported the disease in Saudi Arabia in September 2012.</p>
+</div>
+<div class="footer">
+  
+</div>
 <script>
+let cn = "world";
 var format = d3.format(",");
 // Set tooltips
 let cdata =[];
@@ -136,8 +212,8 @@ var svg = d3.select("#ha")
 var data =[];
 
 var Margin1 = {Top: 30, Right: 30, Bottom: 70, Left: 60},
-    Width = 460 - Margin1.Left - Margin1.Right,
-    Height = 400 - Margin1.Top - Margin1.Bottom;
+    Width = 560 - Margin1.Left - Margin1.Right,
+    Height = 500 - Margin1.Top - Margin1.Bottom;
 
 var Svg = d3.select("#ha")
   .append("svg")
@@ -146,9 +222,10 @@ var Svg = d3.select("#ha")
   .append("g")
     .attr("transform",
           "translate(" + Margin1.Left + "," + Margin1.Top + ")");
+//let bargroup = Svg.append("g").attr("transform", "translate(" + Width / 2 + "," + Height / 2 + ")");
 
 
-
+Svg.append("text").attr("x",180).attr("y",50).text("Death Toll").style("font-size",24)
 
 
 var xAxis = Svg.append("g")
@@ -171,7 +248,7 @@ data = [
 ];
 console.log(data)
 
-              barupdate(data); 
+              barupdate(data,x); 
             return "<strong>Country: </strong><span class='details'>" + x + "<br></span>" + "<strong>Population: </strong><span class='details'>" + format(d.population) +"</span>" + "<strong><br>MERS CONF: </strong><span class='details'>"+fdata[0].MERSCA+"</span>"+ "<strong><br>SARS CONF: </strong><span class='details'>"+fdata[0].SARSCASES+"</span>"+ "<strong><br>H1N1 CONF: </strong><span class='details'>"+fdata[0].H1N1C+"</span>";
             })
 
@@ -187,11 +264,30 @@ queue()
     .defer(d3.json, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
     .defer(d3.csv, "Book1.csv")
     .await(ready);
+out();
+function out()
+{
+data = [
+   {group: "SARS", value: 813},
+   {group: "H1N1", value: 14716},
+   {group: "MERS", value: 574}
+];
+barupdate(data,cn);
+}
+function barupdate(data,nam) {
+ let cnn = [];
+ cnn[0] = nam;
 
-function barupdate(data,x) {
+let text = Svg.selectAll(".cname").data(cnn);
+
+text.enter().append("text").merge(text).attr("x",180).attr("y",20).text(cnn[0]).classed("cname",true).style("font-size",40);
+
+text.exit().remove();
+
+
 
   var y = d3.scaleLinear()
-  .range([ Height, 0]);
+  .range([ Height, 70]);
 
   var x = d3.scaleBand()
   .range([ 0, Width ])
@@ -252,7 +348,7 @@ function ready(error, data, population) {
         })
         .on('mouseout', function(d){
           tip.hide(d);
-
+          out();
           d3.select(this)
             .style("opacity", 0.8)
             .style("stroke","white")

@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 <style>
 * {
   box-sizing: border-box;
 }
-
+.footer2 {
+  padding: 20px;
+  text-align: center;
+  background:  #1abc9c;
+  margin-top: 10px;
+}
 body {
 
 
@@ -15,12 +23,15 @@ body {
 }
 
 
-
+a {
+  color: Navy;
+}
 /* Header/Blog Title */
 .header {
   padding: 30px;
   text-align: center;
-  background: white;
+  background: #1abc9c;
+  color: white;
 }
 
 .header h1 {
@@ -67,12 +78,12 @@ body {
 /* Fake image */
 .fakeimg {
   background-color: #aaa;
-  width: 60%;
+  width: 100%;
   padding: 20px;
 }
 .fakevid {
   background-color: #aaa;
-  width: 60%;
+  width: 100%;
   padding: 20px;
 }
 
@@ -119,55 +130,96 @@ body {
 
 <div class="header">
   <h1>Outbreaks</h1>
-  <p>A Small Study Based Upon Previous Outbreaks</p>
+  <p>A Small Study Based on Virus Outbreaks</p>
 </div>
 
 <div class="topnav">
   <a href="p1.html" class="w3-button w3-bar-item">Corona Dashboard</a>
   <a href="p2.html" class="w3-button w3-bar-item">Previous Outbreaks</a>
   <a href="td.html" class="w3-button w3-bar-item">Compare</a>
-  <a href="index.html" class="w3-button w3-bar-item" style="float:right">Home</a>
+  <a href="https://coronavirus.jhu.edu/map.html" class="w3-button w3-bar-item" target="_blank" style="float:right">JHU Dashboard</a>
 </div>
 
 <div class="row">
   <div class="leftcolumn">
     <div class="card">
       <h2>Covid - 19</h2>
-      <h5>Title description, Dec 7, 2017</h5>
-      <div class="fakevid" style="height:375px;"><iframe width="560" height="315" src="https://www.youtube.com/embed/TPpoJGYlW54" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
-      <p>Some text..</p>
-      <p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+      <h5>Novel Corona Virus</h5>
+      <div class="fakevid" align="center" style="height:350px;"><iframe width="560" height="315" src="https://www.youtube.com/embed/TPpoJGYlW54" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+      <p><b>Precautions to take</b></p>
+      <p>STAY home as much as you can , KEEP a safe distance , WASH hands often ,COVER your cough</p>
     </div>
     <div class="card">
-      <h2>TITLE HEADING</h2>
-      <h5>Title description, Sep 2, 2017</h5>
-      <div class="fakeimg" style="height:200px;">Image</div>
-      <p>Some text..</p>
-      <p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+      <h2>We Can Fight Covid Together!</h2>
+      <h5>want to know how? watch the video below!</h5>
+      <div class="fakevid" align="center" style="height:350px;"><iframe width="560" height="315" src="https://www.youtube.com/embed/dSQztKXR6k0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+      <p>How does it Spread?</p>
+      <p>It spreads primarily through droplets generated when an infected person coughs or sneezes, or through droplets of saliva or discharge from the nose. To protect yourself, clean your hands frequently with an alcohol-based hand rub or wash them with soap and water. <a href="https://www.cdc.gov/coronavirus/2019-ncov/faq.html" target="_blank">Click here for FAQ's.</a></p>
     </div>
   </div>
   <div class="rightcolumn">
     <div class="card">
-      <h2>About Me</h2>
-      <div class="fakeimg" style="height:100px;">Image</div>
-      <p>Some text about me in culpa qui officia deserunt mollit anim..</p>
+
+      <h2 style="color:red">Need help regarding Covid? Know someone who does?</h2>
+      
+        <p>Call 911</p>
+        <p>call 1-800-985-5990</p>
+        <p>call 1-800-799-7233</p><br>
+    
+      <p>or visit the following links</p>
+      <a href="https://www.samhsa.gov/disaster-preparedness" target="_blank">SAMHSA</a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+      <a href="https://www.cdc.gov/coronavirus/2019-ncov/daily-life-coping/managing-stress-anxiety.html" target="_blank">CDC</a>
     </div>
     <div class="card">
-      <h3>Popular Post</h3>
-      <div class="fakeimg"><p>Image</p></div>
-      <div class="fakeimg"><p>Image</p></div>
-      <div class="fakeimg"><p>Image</p></div>
+      <h3 style="color:red">Current Covid Cases Status Globe</h3>
+      <p id = "confirmed">Confirmed:</p>
+      <p id="active">Active:</p>
+      <p id = "recovered">Recovered:</p>
+      <p id = "deaths">Deaths:</p>
+      <p id = "date"></p>
     </div>
     <div class="card">
-      <h3>Follow Me</h3>
-      <p>Some text..</p>
+      <h3>Useful Links</h3>
+      <p><a href="https://www.google.com/covid19/" target="_blank">Google Covid Info</a></p>
+      <p><a href="https://www.cdc.gov/coronavirus/2019-ncov/symptoms-testing/index.html#cdc-chat-bot-open" target="_blank">Covid Self Checker</a></p>
+      <p><a href="https://www.cdc.gov/coronavirus/2019-nCoV/index.html" target="_blank">CDC Covid Info Page</a></p>
+      <p><a href="https://twitter.com/CDCgov?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor" target="_blank">CDC Twitter</a></p>
+      <p><a href="https://www.uab.edu/fightcovid19/" target="_blank">UAB Covid Info page</a></p>
+      <p><a href="https://www.uab.edu/news/coronavirus?utm_source=home&utm_medium=emergency" target="_blank">UAB Covid Helpline</a></p>
+    </div>
     </div>
   </div>
 </div>
 
 <div class="footer">
   <h2>References</h2>
-</div>
+  <p><b>Data Source</b></p>
+  <p>https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series</p>
+  <p>https://coronavirus.jhu.edu/map.html</p>
+  <p>https://www.cdc.gov/</p>
+  <p>https://www.ecdc.europa.eu/en</p>
+  <p>https://www.google.org/flutrends/about/</p>
+  <p>https://www.google.com/maps/d/u/0/viewer?ie=UTF8&hl=en&t=p&msa=0&z=3&mid=1x7pEdHGTqVau7ZAlNvpHXSwzar0&ll=43.46577100351077%2C85.3955687320323</p>
+  <p><b>Webprogramming Ref</b></p>
+  <p>https://www.w3schools.com/</p>
+  <p>https://stackoverflow.com/</p>
 
+</div>
+<div class="footer2"></div>
 </body>
+<script>
+  d3.csv("https://raw.githubusercontent.com/vivekvyellanti/dataout/master/upd.csv",function(data){
+console.log(data);
+document.getElementById("confirmed").innerHTML = "Confirmed   :  "+data[0].Confirmed;
+let act = data[0].Confirmed - data[0].Recovered - data[0].Deaths
+document.getElementById("active").innerHTML    = "Active      :  "+act;
+document.getElementById("recovered").innerHTML = "Recovered   :  "+data[0].Recovered;
+document.getElementById("deaths").innerHTML    = "Deaths      :  "+data[0].Deaths;
+document.getElementById("date").innerHTML    = "Last Updated:  "+data[0].LastUpdated;
+
+  
+  });
+
+
+</script>
 </html>
